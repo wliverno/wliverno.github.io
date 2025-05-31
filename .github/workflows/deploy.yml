@@ -1,8 +1,9 @@
-name: Deploy to GitHub Pages
+name: Deploy Production Site to GitHub Pages
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:  # Allow manual triggering
 
 permissions:
   contents: read
