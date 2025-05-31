@@ -1,0 +1,26 @@
+---
+import { fetchOrcidPublications } from "../lib/orcid.ts";
+import PublicationItem from "./PublicationItem.astro";
+
+interface Publication {
+  title: string;
+  url: string;
+  date: string | null;
+  journal: string | null;
+  type: string | null;
+}
+
+const publications = await fetchOrcidPublications("0000-0001-8637-1213");
+---
+
+{
+  publications.map((pub: Publication) => (
+    <PublicationItem 
+      title={pub.title} 
+      url={pub.url} 
+      date={pub.date}
+      journal={pub.journal}
+      type={pub.type}
+    />
+  ))
+}

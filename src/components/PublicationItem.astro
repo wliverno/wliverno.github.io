@@ -1,0 +1,136 @@
+---
+import Card from './Card.astro';
+import Button from './Button.astro';
+
+interface Props {
+    title: string;
+    url: string;
+    date: string | null;
+    journal: string | null;
+    type: string | null;
+}
+
+const { title, url, date, journal, type } = Astro.props;
+---
+
+<Card>
+    <div class="publication-item">
+        <div class="publication-header">
+            <h3 class="publication-title">{title}</h3>
+            {date && <span class="publication-date">{date}</span>}
+        </div>
+        
+        <div class="publication-details">
+            {journal && (
+                <div class="journal-info">
+                    {/* <span class="label">Published in:</span> */}
+                    <span class="journal-name">{journal}</span>
+                </div>
+            )}
+            {type && (
+                <div class="type-info">
+                    {/* <span class="label">Type:</span> */}
+                    <span class="publication-type">{type}</span>
+                </div>
+            )}
+        </div>
+        
+        <div class="publication-actions">
+            <Button href={url} target="_blank" rel="noopener noreferrer" class="publication-button">
+                View Article
+            </Button>
+        </div>
+    </div>
+</Card>
+
+<style>
+    .publication-item {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .publication-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .publication-title {
+        margin: 0;
+        font-family: 'Raleway Variable', sans-serif;
+        flex: 1;
+        min-width: 0;
+        word-wrap: break-word;
+    }
+
+    .publication-date {
+        color: #666;
+        font-weight: 500;
+        white-space: nowrap;
+        background: rgba(255, 255, 255, 0.3);
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.3rem;
+    }
+
+    .publication-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .journal-info,
+    .type-info {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .label {
+        font-weight: 600;
+        color: #444;
+    }
+
+    .journal-name {
+        font-style: italic;
+        color: #555;
+    }
+
+    .publication-type {
+        color: #555;
+        text-transform: capitalize;
+    }
+
+    .publication-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 0.5rem;
+    }
+
+    :global(.publication-button) {
+        padding: 0.5rem 1.5rem !important;
+        font-size: 1.5rem !important;
+    }
+
+    @media (max-width: 768px) {
+        .publication-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .publication-date {
+            align-self: flex-start;
+        }
+
+        .publication-actions {
+            justify-content: center;
+        }
+
+        :global(.publication-button) {
+            text-align: center;
+        }
+    }
+</style> 

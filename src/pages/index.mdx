@@ -1,0 +1,47 @@
+---
+title: William Livernois
+layout: ../layouts/Layout.astro
+bgImage: "thestand.jpg"
+hero: true
+---
+
+import Card from "../components/Card.astro";
+import Molecule from "../components/Molecule.astro";
+import Button from "../components/Button.astro";
+import News from "../components/News.astro";
+
+<Card>
+# William Livernois
+I'm a PhD candidate in Electrical and Computer Engineering at the University of Washington, completing my dissertation on quantum phenomena in biological systems. My research focuses on **computational modeling of quantum transport in biological materials**, particularly the development of novel spin-dependent transport models for multi-heme cytochromes and metal-modified DNA structures with applications in green energy technology.
+
+<Button href="https://google.com/">Curriculum Vitae</Button>
+<Molecule />
+</Card>
+
+<News newsItems={[
+    {
+        date: "2024-01-15",
+        title: "New Research Publication",
+        summary: "Our latest paper on quantum transport mechanisms in cytochrome c oxidase has been accepted for publication in Nature Physics. The work demonstrates novel spin-dependent transport pathways that could revolutionize bio-inspired energy devices."
+    },
+    {
+        date: "2024-01-10",
+        title: "Conference Presentation at QBio2024",
+        summary: "Presented findings on metal-modified DNA structures at the International Conference on Quantum Biology. The presentation highlighted breakthrough computational models for predicting quantum coherence in biological systems."
+    },
+    {
+        date: "2024-01-05",
+        title: "Graduate Research Fellowship Award",
+        summary: "Awarded the NSF Graduate Research Fellowship for continued work on quantum phenomena in biological materials. This three-year fellowship will support research into bio-inspired quantum devices."
+    },
+    {
+        date: "2023-12-20",
+        title: "Collaborative Project Launch",
+        summary: "Launched collaboration with Pacific Northwest National Laboratory to develop quantum-enhanced biosensors. The project aims to create ultra-sensitive detection systems using quantum transport principles."
+    },
+    {
+        date: "2023-12-15",
+        title: "Teaching Excellence Recognition",
+        summary: "Received the Outstanding Teaching Assistant Award for exceptional performance in undergraduate quantum mechanics courses. Developed innovative visualization tools for complex quantum concepts."
+    }
+]} height="25rem" />
