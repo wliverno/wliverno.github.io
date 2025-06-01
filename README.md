@@ -12,6 +12,7 @@
 - [ ] Implement 3D renderer with image fallback for Molecule component
 - [ ] Work on this site's meta data and SEO
 - [ ] Fix YouTube links for LinkCards with bad meta info
+- [ ] Make whatever formatting or component is necessary for the projects page
 - [ ] Revoke crawler restrictions/robots.txt once everything is done
 
 ## Development Commands
