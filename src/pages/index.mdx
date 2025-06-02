@@ -9,12 +9,20 @@ import Card from "../components/Card.astro";
 import Molecule from "../components/Molecule.astro";
 import Button from "../components/Button.astro";
 import News from "../components/News.astro";
+import SocialIcons from "../components/SocialIcons.astro";
 import CV from "../assets/CV.pdf";
 
 <Card>
 
 # William Livernois
 I'm a Postdoctoral Researcher in Electrical and Computer Engineering at the University of Washington, having recently completing my PhD dissertation on quantum phenomena in biological systems. My research focuses on **computational modeling of quantum transport in biological materials**, particularly the development of novel spin-dependent transport models for multi-heme cytochromes and metal-modified DNA structures with applications in green energy technology.
+
+<SocialIcons 
+    email="william@liverno.is"
+    linkedin="willlivernois" 
+    orcid="0000-0001-8637-1213"
+    github="wliverno"
+/>
 
 <Button href={CV}>Curriculum Vitae</Button>
 

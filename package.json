@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",
+    "@coreui/icons": "^3.0.1",
     "@fontsource-variable/raleway": "^5.2.5",
     "@fontsource/fira-mono": "^5.2.6",
     "@fontsource/istok-web": "^5.2.5",
