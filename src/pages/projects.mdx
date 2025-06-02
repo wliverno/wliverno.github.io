@@ -3,28 +3,20 @@ title: William Livernois - Projects
 layout: ../layouts/Layout.astro
 bgImage: "mountain.jpg"
 ---
-import Card from "../components/Card.astro";
+
+import GitCard from "../components/GitCard.astro";
 
 # Projects
 
-<Card>
+<GitCard
+    title="GauNEGF"
+    description="A quantum transport code for simulating electron transport through molecular junctions using the non-equilibrium Green's function formalism. Written in Python, this package provides a flexible framework for studying quantum phenomena in nanoscale devices."
+    githubUrl="https://github.com/wliverno/GauNEGF"
+    docsUrl="https://wliverno.github.io/GauNEGF"
+/>
 
-## GauNEGF
-
-A quantum transport code for simulating electron transport through molecular junctions using the non-equilibrium Green's function formalism. Written in Python, this package provides a flexible framework for studying quantum phenomena in nanoscale devices.
-
-[Documentation](../GauNEGF)
-
-[View on GitHub](https://github.com/wliverno/GauNEGF)
-
-</Card>
-
-<Card>
-
-## PyMSMT
-
-A Python package for performing molecular dynamics simulations of metal mediated DNA strands using a patch on the existing MCPB.py package in AmberTools
-
-[View on GitHub](https://github.com/wliverno/pymsmt)
-
-</Card>
+<GitCard
+    title="PyMSMT"
+    description="A Python package for performing molecular dynamics simulations of metal mediated DNA strands using a patch on the existing MCPB.py package in AmberTools"
+    githubUrl="https://github.com/wliverno/pymsmt"
+/>

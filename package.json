@@ -11,6 +11,7 @@
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",
     "@fontsource-variable/raleway": "^5.2.5",
+    "@fontsource/fira-mono": "^5.2.6",
     "@fontsource/istok-web": "^5.2.5",
     "astro": "^5.7.10",
     "xml2js": "^0.6.2"

@@ -1,0 +1,307 @@
+---
+interface Props {
+    title?: string;
+    description?: string;
+    githubUrl: string;
+    docsUrl?: string;
+}
+
+const { title, description, githubUrl, docsUrl } = Astro.props;
+
+// Extract owner and repo from GitHub URL
+const githubMatch = githubUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+const owner = githubMatch?.[1];
+const repo = githubMatch?.[2];
+
+let repoData = null;
+let contributorsCount = 0;
+let commitsCount = 0;
+let releasesCount = 0;
+let latestReleaseVersion = null;
+let lastCommitDate = null;
+let apiError = false;
+
+// TEMPORARY: Fake data for testing - REMOVE WHEN GITHUB API IS WORKING
+const useFakeData = false;
+if (useFakeData) {
+    repoData = {
+        name: repo,
+        language: repo === 'GauNEGF' ? 'Python' : 'Python',
+        description: description,
+        stargazers_count: repo === 'GauNEGF' ? 128 : 42,
+        forks_count: repo === 'GauNEGF' ? 42 : 12,
+        watchers_count: repo === 'GauNEGF' ? 12 : 6,
+        license: { spdx_id: 'MIT' }
+    };
+    contributorsCount = repo === 'GauNEGF' ? 3 : 1;
+    commitsCount = repo === 'GauNEGF' ? 154 : 67;
+    latestReleaseVersion = repo === 'GauNEGF' ? 'v1.3.2' : 'v0.8.1';
+    lastCommitDate = repo === 'GauNEGF' ? 'May 30, 2024' : 'Nov 15, 2024';
+    apiError = false;
+} else {
+    // END TEMPORARY FAKE DATA
+
+if (owner && repo) {
+    try {
+        // Fetch main repository data
+        const repoResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+        
+        if (repoResponse.status === 403) {
+            console.warn('GitHub API rate limit exceeded');
+            apiError = true;
+        } else if (repoResponse.ok) {
+            repoData = await repoResponse.json();
+            
+            // Only fetch additional data if main repo data was successful
+            if (repoData && !apiError) {
+                // Fetch contributors count
+                try {
+                    const contributorsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/contributors?per_page=1`);
+                    if (contributorsResponse.ok) {
+                        const linkHeader = contributorsResponse.headers.get('link');
+                        if (linkHeader && linkHeader.includes('rel="last"')) {
+                            const lastPageMatch = linkHeader.match(/page=(\d+)>; rel="last"/);
+                            contributorsCount = lastPageMatch ? parseInt(lastPageMatch[1]) : 1;
+                        } else {
+                            const contributors = await contributorsResponse.json();
+                            contributorsCount = contributors.length;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch contributors:', error);
+                }
+
+                // Fetch commits count (from default branch)
+                try {
+                    const commitsResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits?per_page=1`);
+                    if (commitsResponse.ok) {
+                        const linkHeader = commitsResponse.headers.get('link');
+                        if (linkHeader && linkHeader.includes('rel="last"')) {
+                            const lastPageMatch = linkHeader.match(/page=(\d+)>; rel="last"/);
+                            commitsCount = lastPageMatch ? parseInt(lastPageMatch[1]) : 1;
+                        } else {
+                            const commits = await commitsResponse.json();
+                            commitsCount = commits.length;
+                            // Get last commit date
+                            if (commits.length > 0) {
+                                const date = new Date(commits[0].commit.committer.date);
+                                lastCommitDate = date.toLocaleDateString('en-US', { 
+                                    year: 'numeric', 
+                                    month: 'short', 
+                                    day: 'numeric' 
+                                });
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch commits:', error);
+                }
+
+                // Fetch latest release
+                try {
+                    const releasesResponse = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`);
+                    if (releasesResponse.ok) {
+                        const latestRelease = await releasesResponse.json();
+                        latestReleaseVersion = latestRelease.tag_name;
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch latest release:', error);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Failed to fetch GitHub data:', error);
+        apiError = true;
+    }
+}
+} // END TEMPORARY FAKE DATA BLOCK
+
+import Card from "./Card.astro";
+import Button from "./Button.astro";
+---
+
+<Card>
+    <div class="git-card-content">
+        <div class="header">
+            <h3 class="title">{title || repoData?.name || repo || 'Repository'}</h3>
+            {repoData?.language && (
+                <span class="language" data-language={repoData.language.toLowerCase()}>
+                    {repoData.language}
+                </span>
+            )}
+        </div>
+        
+        {apiError && (
+            <div class="api-notice">
+                <p>📊 GitHub statistics temporarily unavailable (API rate limit). Visit the repository for live stats.</p>
+            </div>
+        )}
+        
+        {repoData && !apiError && (
+            <div class="stats">
+                <span class="stat-item">⭐ {repoData.stargazers_count}</span>
+                <span class="stat-item">🍴 {repoData.forks_count}</span>
+                <span class="stat-item">👁️ {repoData.watchers_count}</span>
+                <span class="stat-item mobile-hide-3">👥 {contributorsCount}</span>
+                <span class="stat-item mobile-hide-2">📝 <span class="commits-text">{commitsCount} commits</span><span class="commits-mobile">{commitsCount}</span></span>
+                {latestReleaseVersion && (
+                    <span class="stat-item">🏷️ {latestReleaseVersion}</span>
+                )}
+                {lastCommitDate && (
+                    <span class="stat-item mobile-hide-1">📅 {lastCommitDate}</span>
+                )}
+            </div>
+        )}
+        
+        <p class="description">
+            {description || repoData?.description || 'No description available.'}
+        </p>
+        
+        <div class="buttons">
+            <Button href={githubUrl} target="_blank" rel="noopener noreferrer">
+                View on GitHub
+            </Button>
+            {docsUrl && (
+                <Button href={docsUrl} target="_blank" rel="noopener noreferrer">
+                    Documentation
+                </Button>
+            )}
+        </div>
+    </div>
+</Card>
+
+<style>
+    .git-card-content {
+        width: 100%;
+    }
+    
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .title {
+        margin: 0;
+        color: #333;
+        font-family: 'Raleway Variable', sans-serif;
+        font-size: 1.25rem;
+    }
+    
+    .language {
+        background: #f1f3f4;
+        border: 1px solid #d0d7de;
+        border-radius: 2rem;
+        padding: 0.25rem 0.75rem;
+        font-family: 'Fira Mono', 'Monaco', 'Consolas', monospace;
+        font-size: 0.9rem;
+        color: #656d76;
+    }
+    
+    /* Language-specific colors */
+    .language[data-language="python"] {
+        background: #3776ab;
+        color: white;
+        border-color: #3776ab;
+    }
+    
+    .language[data-language="javascript"] {
+        background: #f7df1e;
+        color: black;
+        border-color: #f7df1e;
+    }
+    
+    .language[data-language="typescript"] {
+        background: #3178c6;
+        color: white;
+        border-color: #3178c6;
+    }
+    
+    .language[data-language="rust"] {
+        background: #dea584;
+        color: black;
+        border-color: #dea584;
+    }
+    
+    .language[data-language="go"] {
+        background: #00add8;
+        color: white;
+        border-color: #00add8;
+    }
+    
+    .description {
+        margin: 0 0 1.5rem 0;
+        line-height: 1.6;
+        color: #586069;
+        font-size: 1.15rem;
+    }
+    
+    .stats {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 0;
+        font-family: 'Fira Mono', 'Monaco', 'Consolas', monospace;
+        font-size: 1rem;
+        color: #666;
+    }
+    
+    .commits-mobile {
+        display: none;
+    }
+    
+    .commits-text {
+        display: inline;
+    }
+    
+    .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        
+        .stats {
+            gap: 1rem;
+            padding: 0;
+            font-size: 0.85rem;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .mobile-hide-1 {
+            display: none;
+        }
+        
+        .commits-text {
+            display: none;
+        }
+        
+        .commits-mobile {
+            display: inline;
+        }
+        
+        .buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .mobile-hide-2 {
+            display: none;
+        }
+    }
+    
+    @media (max-width: 360px) {
+        .mobile-hide-3 {
+            display: none;
+        }
+    }
+</style>

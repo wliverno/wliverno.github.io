@@ -4,12 +4,13 @@ interface Props {
     target?: string;
     rel?: string;
     class?: string;
+    nav?: boolean;
 }
 
-const { href, target, rel, class: className, ...rest } = Astro.props;
+const { href, target, rel, class: className, nav = false, ...rest } = Astro.props;
 ---
 
-<a href={href} target={target} rel={rel} class={`button ${className || ''}`} {...rest}>
+<a href={href} target={target} rel={rel} class={`button ${nav ? 'nav-button' : 'content-button'} ${className || ''}`} {...rest}>
     <slot />
 </a>
 
@@ -18,11 +19,8 @@ const { href, target, rel, class: className, ...rest } = Astro.props;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0) 100%), linear-gradient(180deg, #008000 0%, #90EE90 100%);
         box-shadow: 0px 0px .5rem .1rem rgba(0, 0, 0, 0.5);
         border-radius: 100em;
-        padding: .1rem 2rem;
         margin: 0;
         font-style: normal;
-        font-weight: 400;
-        font-size: 2rem;
         display: inline-block;
         text-align: center;
         text-decoration: none;
@@ -33,6 +31,16 @@ const { href, target, rel, class: className, ...rest } = Astro.props;
         position: relative;
         overflow: hidden;
         user-select: none;
+    }
+
+    .nav-button {
+        padding: .1rem 2rem;
+        font-size: 2rem;
+    }
+
+    .content-button {
+        padding: .1rem 2rem;
+        font-size: 1.5rem;
     }
 
     .button::before {
@@ -70,5 +78,13 @@ const { href, target, rel, class: className, ...rest } = Astro.props;
     .button:focus {
         outline: none;
         box-shadow: 0px 0px .5rem .1rem rgba(0, 0, 0, 1), 0 0 0 3px rgba(255, 255, 255, 0.6);
+    }
+    @media (max-width: 768px) {
+        .content-button {
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+            width: fit-content;
+        }
     }
 </style> 

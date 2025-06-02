@@ -61,6 +61,8 @@ const { title, url, date, journal, type } = Astro.props;
     .publication-title {
         margin: 0;
         font-family: 'Raleway Variable', sans-serif;
+        color: #333;
+        font-size: 1.25rem;
         flex: 1;
         min-width: 0;
         word-wrap: break-word;
@@ -68,7 +70,7 @@ const { title, url, date, journal, type } = Astro.props;
 
     .publication-date {
         color: #666;
-        font-weight: 500;
+        font-size: 1rem;
         white-space: nowrap;
         background: rgba(255, 255, 255, 0.3);
         padding: 0.2rem 0.5rem;
@@ -95,23 +97,20 @@ const { title, url, date, journal, type } = Astro.props;
 
     .journal-name {
         font-style: italic;
-        color: #555;
+        color: #586069;
+        font-size: 1.15rem;
     }
 
     .publication-type {
-        color: #555;
+        color: #586069;
+        font-size: 1.15rem;
         text-transform: capitalize;
     }
 
     .publication-actions {
         display: flex;
-        justify-content: flex-end;
+        justify-content: flex-start;
         margin-top: 0.5rem;
-    }
-
-    :global(.publication-button) {
-        padding: 0.5rem 1.5rem !important;
-        font-size: 1.5rem !important;
     }
 
     @media (max-width: 768px) {
@@ -127,10 +126,6 @@ const { title, url, date, journal, type } = Astro.props;
 
         .publication-actions {
             justify-content: center;
-        }
-
-        :global(.publication-button) {
-            text-align: center;
         }
     }
 </style> 
