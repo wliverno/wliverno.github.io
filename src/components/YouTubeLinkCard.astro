@@ -1,0 +1,138 @@
+---
+import Card from './Card.astro';
+import Button from './Button.astro';
+
+interface Props {
+    title?: string;
+    url: string;
+    description?: string;
+}
+
+const { title: providedTitle, url, description: providedDescription } = Astro.props;
+
+// Extract video ID for thumbnail
+function extractYouTubeVideoId(url: string): string | null {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+}
+
+const videoId = extractYouTubeVideoId(url);
+const title = providedTitle || 'YouTube Video';
+const description = providedDescription || 'Watch this video on YouTube';
+
+// Generate thumbnail URLs - YouTube provides reliable thumbnail endpoints
+const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null;
+const highQualityThumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
+---
+
+<Card>
+    <div class="youtube-link-card">
+        <div class="content">
+            <div class="site-info">
+                <span class="site-name">YouTube</span>
+            </div>
+            <h3 class="video-title">{title}</h3>
+            <p class="description">{description}</p>
+            <Button href={url} target="_blank" rel="noopener noreferrer" class="link-card-button">
+                Watch Video
+            </Button>
+        </div>
+        {thumbnailUrl && (
+            <div class="image-container">
+                <img 
+                    src={thumbnailUrl}
+                    alt={title}
+                    class="thumbnail"
+                    loading="lazy"
+                />
+            </div>
+        )}
+    </div>
+</Card>
+
+<style>
+    .youtube-link-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 2rem;
+    }
+
+    .content {
+        flex: 1;
+        min-width: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .site-info {
+        margin-bottom: 0.5rem;
+    }
+
+    .site-name {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .video-title {
+        margin: 0 0 1rem 0;
+        font-family: 'Raleway Variable', sans-serif;
+        color: #333;
+        font-size: 1.25rem;
+        word-wrap: break-word;
+    }
+
+    .description {
+        margin: 0 0 1.5rem 0;
+        color: #586069;
+        font-size: 1.15rem;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .image-container {
+        width: 200px;
+        height: 150px;
+        flex-shrink: 0;
+        overflow: hidden;
+        border-radius: 0.5rem;
+        margin: auto 0;
+    }
+
+    .thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+        .youtube-link-card {
+            flex-direction: column-reverse;
+            gap: 1rem;
+        }
+
+        .content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 150px;
+            max-width: 100%;
+        }
+
+        .description {
+            -webkit-line-clamp: 2;
+        }
+    }
+</style> 
