@@ -23,7 +23,7 @@ const publications = await fetchOrcidPublications(id);
       journal={pub.journal}
       type={pub.type}
       doi={pub.doi}
-      authorFilter={authorFilter}
+      {authorFilter}
     />
   ))
 }

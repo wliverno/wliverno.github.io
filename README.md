@@ -6,14 +6,17 @@
 - [X] Fill out projects content  
 - [X] Provide a CV for the CV link (currently goes to Google)
 - [ ] Provide a 3D model for the Molecule component
+- [x] Provide Socials and where to put them
 
 ## Rick's Tasks
 
 - [ ] Implement 3D renderer with image fallback for Molecule component
 - [ ] Work on this site's meta data and SEO
-- [ ] Fix YouTube links for LinkCards with bad meta info
+- [ ] Add tracking/analytics
+- [X] Fix YouTube links for LinkCards with bad meta info
 - [X] Make whatever formatting or component is necessary for the projects page
-- [ ] Make another style pass on the Publications page, perhaps including some sort of citation or collaborating authors
+- [X] Make another style pass on the Publications page, perhaps including some sort of citation or collaborating authors
+- [X] Add socials somewhere
 - [ ] Favicon
 - [ ] Revoke crawler restrictions/robots.txt once everything is done
 

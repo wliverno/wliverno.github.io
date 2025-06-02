@@ -12,7 +12,7 @@ interface Props {
     doi: string | null;
 }
 
-const { title, url, date, journal, type, doi } = Astro.props;
+const { title, url, date, journal, type, doi, authorFilter } = Astro.props;
 
 // Fetch DOI citation data if DOI is available
 let doiCitation = null;
@@ -28,9 +28,9 @@ if (doi) {
     try {
         doiCitation = await fetchDOICitation(doi);
         if (doiCitation) {
-            // Format authors with highlighting for "William Livernois"
+            // Format authors with highlighting for authorFilter
             if (doiCitation.author) {
-                authorsDisplay = formatAuthors(doiCitation.author, 'William Livernois');
+                authorsDisplay = formatAuthors(doiCitation.author, authorFilter);
             }
             
             // Use DOI data to enrich existing data where available
