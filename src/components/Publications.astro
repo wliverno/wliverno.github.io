@@ -8,9 +8,10 @@ interface Publication {
   date: string | null;
   journal: string | null;
   type: string | null;
+  doi: string | null;
 }
-
-const publications = await fetchOrcidPublications("0000-0001-8637-1213");
+const {id, authorFilter} = Astro.props;
+const publications = await fetchOrcidPublications(id);
 ---
 
 {
@@ -21,6 +22,8 @@ const publications = await fetchOrcidPublications("0000-0001-8637-1213");
       date={pub.date}
       journal={pub.journal}
       type={pub.type}
+      doi={pub.doi}
+      authorFilter={authorFilter}
     />
   ))
 }

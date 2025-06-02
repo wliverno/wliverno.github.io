@@ -1,6 +1,7 @@
 ---
 import Card from './Card.astro';
 import Button from './Button.astro';
+import { fetchDOICitation, formatAuthors, parseJatsToHtml, cleanAbstract } from '../lib/doi';
 
 interface Props {
     title: string;
@@ -8,40 +9,131 @@ interface Props {
     date: string | null;
     journal: string | null;
     type: string | null;
+    doi: string | null;
 }
 
-const { title, url, date, journal, type } = Astro.props;
+const { title, url, date, journal, type, doi } = Astro.props;
+
+// Fetch DOI citation data if DOI is available
+let doiCitation = null;
+let authorsDisplay = '';
+let enrichedTitle = title;
+let enrichedJournal = journal;
+let enrichedPublisher = '';
+let enrichedAbstract = '';
+let parsedAbstract = '';
+let additionalInfo = [];
+
+if (doi) {
+    try {
+        doiCitation = await fetchDOICitation(doi);
+        if (doiCitation) {
+            // Format authors with highlighting for "William Livernois"
+            if (doiCitation.author) {
+                authorsDisplay = formatAuthors(doiCitation.author, 'William Livernois');
+            }
+            
+            // Use DOI data to enrich existing data where available
+            enrichedTitle = doiCitation.title || title;
+            enrichedJournal = doiCitation['container-title'] || journal;
+            enrichedPublisher = doiCitation.publisher || '';
+            enrichedAbstract = doiCitation.abstract || '';
+            
+            // Clean and parse JATS XML in abstract to HTML
+            if (enrichedAbstract) {
+                const cleanedAbstract = cleanAbstract(enrichedAbstract);
+                parsedAbstract = parseJatsToHtml(cleanedAbstract);
+            }
+            
+            // Collect additional info that might be useful
+            if (doiCitation.volume) additionalInfo.push(`Vol. ${doiCitation.volume}`);
+            if (doiCitation.issue) additionalInfo.push(`Issue ${doiCitation.issue}`);
+            if (doiCitation.page) additionalInfo.push(`pp. ${doiCitation.page}`);
+        }
+    } catch (error) {
+        console.error('Failed to fetch DOI citation data:', error);
+    }
+}
+
+// Generate unique ID for this publication item
+const publicationId = `publication-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
 <Card>
     <div class="publication-item">
         <div class="publication-header">
-            <h3 class="publication-title">{title}</h3>
+            <h3 class="publication-title">{enrichedTitle}</h3>
             {date && <span class="publication-date">{date}</span>}
         </div>
         
+        {authorsDisplay && (
+            <div class="authors-section">
+                {/* <span class="authors-label">Authors:</span> */}
+                <span class="authors-list" set:html={authorsDisplay}></span>
+            </div>
+        )}
+        
         <div class="publication-details">
-            {journal && (
+            {enrichedJournal && (
                 <div class="journal-info">
-                    {/* <span class="label">Published in:</span> */}
-                    <span class="journal-name">{journal}</span>
+                    <span class="journal-name">{enrichedJournal}</span>
+                    {enrichedPublisher && enrichedPublisher !== enrichedJournal && (
+                        <span class="publisher-name">({enrichedPublisher})</span>
+                    )}
                 </div>
             )}
-            {type && (
+            {additionalInfo.length > 0 && (
+                <div class="additional-info">
+                    <span class="additional-details">{additionalInfo.join(', ')}</span>
+                </div>
+            )}
+            {type && type !== 'journal-article' && (
                 <div class="type-info">
-                    {/* <span class="label">Type:</span> */}
                     <span class="publication-type">{type}</span>
                 </div>
             )}
         </div>
         
+        {parsedAbstract && (
+            <div class="abstract-section" data-abstract-id={publicationId}>
+                <div class="abstract-text" data-text-content={publicationId} set:html={parsedAbstract}></div>
+            </div>
+        )}
+        
         <div class="publication-actions">
             <Button href={url} target="_blank" rel="noopener noreferrer" class="publication-button">
-                View Article
+                View
             </Button>
+            <!-- {doi && doi !== url && (
+                <Button href={`https://doi.org/${doi.replace(/^https?:\/\/(dx\.)?doi\.org\//, '')}`} target="_blank" rel="noopener noreferrer" class="publication-button">
+                    View DOI
+                </Button>
+            )} -->
         </div>
     </div>
 </Card>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle abstract toggle functionality
+    document.querySelectorAll('[data-abstract-id]').forEach((abstractSection) => {
+        abstractSection.addEventListener('click', (event) => {
+            event.preventDefault();
+            
+            const toggleId = abstractSection.getAttribute('data-abstract-id');
+            if (!toggleId) return;
+            
+            const isExpanded = abstractSection.classList.contains('expanded');
+            
+            if (isExpanded) {
+                abstractSection.classList.remove('expanded');
+            } else {
+                abstractSection.classList.add('expanded');
+            }
+        });
+    });
+});
+</script>
 
 <style>
     .publication-item {
@@ -78,6 +170,27 @@ const { title, url, date, journal, type } = Astro.props;
         border-radius: 0.3rem;
     }
 
+    .authors-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 0.3rem;
+        border-left: 3px solid #4a90e2;
+    }
+
+    .authors-list {
+        color: #586069;
+        font-size: 1.15rem;
+        line-height: 1.6;
+    }
+
+    .authors-list :global(strong) {
+        color: #333;
+    }
+
     .publication-details {
         display: flex;
         flex-direction: column;
@@ -85,15 +198,12 @@ const { title, url, date, journal, type } = Astro.props;
     }
 
     .journal-info,
-    .type-info {
+    .type-info,
+    .additional-info {
         display: flex;
         gap: 0.5rem;
         align-items: center;
-    }
-
-    .label {
-        font-weight: 600;
-        color: #444;
+        flex-wrap: wrap;
     }
 
     .journal-name {
@@ -102,31 +212,126 @@ const { title, url, date, journal, type } = Astro.props;
         font-size: 1.15rem;
     }
 
+    .publisher-name {
+        color: #666;
+        font-size: 1.15rem;
+    }
+
+    .additional-details {
+        color: #666;
+        font-size: 1.15rem;
+        font-family: 'Fira Mono', 'Monaco', 'Consolas', monospace;
+    }
+
     .publication-type {
         color: #586069;
         font-size: 1.15rem;
         text-transform: capitalize;
     }
 
+    .abstract-section {
+        margin-top: 0.5rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        border-left: 3px solid #90ee90;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .abstract-section:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .abstract-text {
+        margin: 0;
+        color: #586069;
+        font-size: 1.15rem;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .abstract-section.expanded .abstract-text {
+        display: block;
+        -webkit-line-clamp: unset;
+        max-height: none;
+        overflow: visible;
+    }
+
+    /* Scientific formatting from JATS */
+    .abstract-text :global(.small-caps) {
+        font-variant: small-caps;
+    }
+
+    .abstract-text :global(sup) {
+        font-size: 0.8em;
+        vertical-align: super;
+    }
+
+    .abstract-text :global(sub) {
+        font-size: 0.8em;
+        vertical-align: sub;
+    }
+
+    .abstract-text :global(code) {
+        font-family: 'Fira Mono', monospace;
+        background: rgba(0, 0, 0, 0.1);
+        padding: 0.1rem 0.3rem;
+        border-radius: 0.2rem;
+        font-size: 0.9em;
+    }
+
+    .abstract-text :global(a) {
+        color: #4a90e2;
+        text-decoration: underline;
+    }
+
+    .abstract-text :global(a:hover) {
+        color: #357abd;
+    }
+
     .publication-actions {
         display: flex;
         justify-content: flex-start;
         margin-top: 0.5rem;
+        gap: 1rem;
+        flex-wrap: wrap;
     }
 
     @media (max-width: 768px) {
-        .publication-header {
+        /* .publication-header {
             flex-direction: column;
             align-items: flex-start;
             gap: 0.5rem;
-        }
+        } */
 
         .publication-date {
             align-self: flex-start;
         }
 
+        .authors-section {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.3rem;
+        }
+
+        .abstract-text {
+            -webkit-line-clamp: 6; /* More lines on mobile */
+        }
+
         .publication-actions {
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .abstract-text {
+            -webkit-line-clamp: 8; /* Even more lines on small mobile */
         }
     }
 </style> 

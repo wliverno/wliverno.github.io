@@ -15,7 +15,10 @@ function decodeHtmlEntities(text: string): string {
         '&#x2F;': '/',
         '&#39;': "'",
         '&apos;': "'",
-        '&nbsp;': ' '
+        '&nbsp;': ' ',
+        '&ndash;': '–',
+        '&mdash;': '—',
+        '&hellip;': '…'
     };
     
     return text.replace(/&[#\w]+;/g, (entity) => {

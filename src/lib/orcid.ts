@@ -24,6 +24,7 @@ export async function fetchOrcidPublications(orcidId: string) {
       date: work['work:work-summary']?.[0]['common:publication-date']?.[0]['common:year']?.[0] ?? null,
       journal: work['work:work-summary']?.[0]['work:journal-title']?.[0] ?? null,
       type: work['work:work-summary']?.[0]['work:type']?.[0] ?? null,
+      doi: work['work:work-summary']?.[0]['common:external-ids']?.[0]['common:external-id']?.[0]['common:external-id-value']?.[0] ?? null,
     };
   });
 }

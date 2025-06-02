@@ -46,6 +46,7 @@ const { email, linkedin, orcid, github } = Astro.props;
         justify-content: flex-start;
         margin-top: 0;
         margin-bottom: 2rem;
+        margin-left: -1rem;
         gap: 1rem;
     }
     
@@ -80,6 +81,7 @@ const { email, linkedin, orcid, github } = Astro.props;
     @media (max-width: 768px) {
         .social-icons {
             justify-content: center;
+            margin-left: 0;
         }
         
         .social-icons a {
