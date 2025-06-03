@@ -7,16 +7,86 @@ import '@fontsource-variable/raleway';
 import '@fontsource/fira-mono';
 
 const currentYear = new Date().getFullYear();
+
+// SEO defaults
+const defaultTitle = "William Livernois - Computational Biophysics & Quantum Transport Research";
+const defaultDescription = "Postdoctoral Researcher in Electrical and Computer Engineering at University of Washington. Specializing in quantum phenomena in biological systems and computational modeling of charge transport in biomolecules.";
+const siteUrl = "https://wliverno.github.io";
+const defaultImage = `${siteUrl}/og-image.png`;
+
+// Page-specific meta data
+const title = frontmatter.title || defaultTitle;
+const description = frontmatter.description || defaultDescription;
+const image = frontmatter.image ? `${siteUrl}${frontmatter.image}` : defaultImage;
+const url = `${siteUrl}${Astro.url.pathname}`;
 ---
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{frontmatter.title}</title>
+		
+		<!-- Primary Meta Tags -->
+		<title>{title}</title>
+		<meta name="title" content={title} />
+		<meta name="description" content={description} />
+		<meta name="author" content="William Livernois" />
+		<meta name="keywords" content="computational biophysics, quantum transport, biomolecules, DNA electronics, molecular electronics, postdoc researcher, University of Washington" />
+		
+		<!-- Canonical URL -->
+		<link rel="canonical" href={url} />
+		
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={url} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={image} />
+		<meta property="og:site_name" content="William Livernois" />
+		<meta property="og:locale" content="en_US" />
+		
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:url" content={url} />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={image} />
+		
+		<!-- Additional Meta Tags -->
+		<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+		<meta name="theme-color" content="#333333" />
+		
+		<!-- Structured Data -->
+		<script type="application/ld+json">
+			{
+				"@context": "https://schema.org",
+				"@type": "Person",
+				"name": "William Livernois",
+				"jobTitle": "Postdoctoral Researcher",
+				"worksFor": {
+					"@type": "Organization",
+					"name": "University of Washington",
+					"department": "Electrical and Computer Engineering"
+				},
+				"url": "https://wliverno.github.io",
+				"sameAs": [
+					"https://linkedin.com/in/willlivernois",
+					"https://github.com/wliverno",
+					"https://orcid.org/0000-0001-8637-1213"
+				],
+				"alumniOf": "University of Washington",
+				"email": "william@liverno.is",
+				"knowsAbout": [
+					"Computational Biophysics",
+					"Quantum Transport",
+					"Molecular Electronics",
+					"DNA-based Electronics",
+					"Biomolecular Modeling"
+				]
+			}
+		</script>
 	</head>
 	<body>
 		<Nav />

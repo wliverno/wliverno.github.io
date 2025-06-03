@@ -16,5 +16,8 @@
     "@fontsource/istok-web": "^5.2.5",
     "astro": "^5.7.10",
     "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@astrojs/sitemap": "^3.4.0"
   }
 }
