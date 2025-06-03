@@ -23,6 +23,9 @@ const url = `${siteUrl}${Astro.url.pathname}`;
 <!doctype html>
 <html lang="en">
 	<head>
+		<!-- Plausible Analytics -->
+		<script defer data-domain="wliverno.github.io" src="https://plausible.io/js/script.js" />
+
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -90,7 +93,7 @@ const url = `${siteUrl}${Astro.url.pathname}`;
 	</head>
 	<body>
 		<Nav />
-		<Background bgImage={frontmatter.bgImage}/>
+		<Background bgImage={frontmatter.bgImage} objectPosition={frontmatter.objectPosition}/>
 		<main>
 			{frontmatter.hero && <div id="hero_spacer" />}
 			<slot />

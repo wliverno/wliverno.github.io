@@ -1,7 +1,7 @@
 ---
 import type { ImageMetadata } from 'astro';
 import { Image } from "astro:assets";
-const { bgImage, alt = '', ...rest } = Astro.props;
+const { bgImage, objectPosition = 'center top', alt = '', ...rest } = Astro.props;
 
 let matchedImage = null;
 const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/backgrounds/*.{jpeg,jpg,png,gif}');
@@ -18,7 +18,7 @@ if (!matchedImage) {
 }
 ---
 
-<Image src={matchedImage()} alt={alt} class="bgImage" {...rest} />
+<Image src={matchedImage()} alt={alt} class="bgImage" style={`object-position: ${objectPosition};`} {...rest} />
 
 <style>
   .bgImage {
@@ -31,7 +31,6 @@ if (!matchedImage) {
     height: 100vh;
     z-index: -5;
     object-fit: cover;
-    object-position: 30% 20%;
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%);
   }
 </style>
