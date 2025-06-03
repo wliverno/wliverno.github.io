@@ -11,14 +11,14 @@
 ## Rick's Tasks
 
 - [ ] Implement 3D renderer with image fallback for Molecule component
-- [ ] Work on this site's meta data and SEO
-- [ ] Add tracking/analytics
+- [X] Work on this site's meta data and SEO
+- [X] Add tracking/analytics
 - [X] Fix YouTube links for LinkCards with bad meta info
 - [X] Make whatever formatting or component is necessary for the projects page
 - [X] Make another style pass on the Publications page, perhaps including some sort of citation or collaborating authors
 - [X] Add socials somewhere
-- [ ] Favicon
-- [ ] Revoke crawler restrictions/robots.txt once everything is done
+- [X] Favicon
+- [X] Revoke crawler restrictions/robots.txt once everything is done
 
 ## Development Commands
 
