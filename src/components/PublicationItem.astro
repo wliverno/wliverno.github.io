@@ -31,7 +31,7 @@ if (doi) {
         if (doiCitation) {
             // Format authors with highlighting for authorFilter
             if (doiCitation.author) {
-                authorsDisplay = formatAuthors(doiCitation.author, authorFilter);
+                authorsDisplay = formatAuthors(doiCitation.author, authorFilter || undefined);
             }
             
             // Use DOI data to enrich existing data where available
