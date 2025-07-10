@@ -24,7 +24,7 @@ const { newsItems, height = "20rem" } = Astro.props;
                     <div class="news-date">{item.date}</div>
                     <div class="news-content">
                         <h3 class="news-title">{item.title}</h3>
-                        <p class="news-summary">{item.summary}</p>
+                        <p class="news-summary" set:html={item.summary}></p>
                     </div>
                 </div>
             ))}
